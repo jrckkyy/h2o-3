@@ -28,22 +28,23 @@
 #' @param decrypt_tool (Optional) Specify a Decryption Tool (key-reference
 #'        acquired by calling \link{h2o.decryptionSetup}.
 #' @param chunk_size size of chunk of (input) data in bytes
+#' @param skipped_columns a list of column indices to be excluded from parsing
 #' @seealso \link{h2o.importFile}, \link{h2o.parseSetup}
 #' @export
 h2o.parseRaw <- function(data, pattern="", destination_frame = "", header=NA, sep = "", col.names=NULL,
                          col.types=NULL, na.strings=NULL, blocking=FALSE, parse_type = NULL, chunk_size = NULL,
-                         decrypt_tool = NULL) {
+                         decrypt_tool = NULL, skipped_columns = NULL) {
   # Check and parse col.types in case col.types is supplied col.name = col.type vec
   if( length(names(col.types)) > 0 & typeof(col.types) != "list" ) {
     parse.params <- h2o.parseSetup(data, pattern="", destination_frame, header, sep, col.names, col.types = NULL,
                                    na.strings = na.strings, parse_type = parse_type, chunk_size = chunk_size,
-                                   decrypt_tool = decrypt_tool)
+                                   decrypt_tool = decrypt_tool, skipped_columns=skipped_columns)
     idx = match(names(col.types), parse.params$column_names)
     parse.params$column_types[idx] = as.character(col.types)
   } else {
     parse.params <- h2o.parseSetup(data, pattern="", destination_frame, header, sep, col.names, col.types,
                                    na.strings = na.strings, parse_type = parse_type, chunk_size = chunk_size,
-                                   decrypt_tool = decrypt_tool)
+                                   decrypt_tool = decrypt_tool, skipped_columns=skipped_columns)
   }
   for(w in parse.params$warnings){
     cat('WARNING:',w,'\n')
@@ -62,7 +63,8 @@ h2o.parseRaw <- function(data, pattern="", destination_frame = "", header=NA, se
             chunk_size = parse.params$chunk_size,
             delete_on_done = parse.params$delete_on_done,
             blocking = blocking,
-            decrypt_tool = .decrypt_tool_id(parse.params$decrypt_tool)
+            decrypt_tool = .decrypt_tool_id(parse.params$decrypt_tool),
+            skipped_columns = paste0("[", paste(parse.params$skipped_columns, collapse=','), "]")
             )
 
   # Perform the parse
@@ -124,7 +126,7 @@ h2o.parseRaw <- function(data, pattern="", destination_frame = "", header=NA, se
 #' @seealso \link{h2o.parseRaw}
 #' @export
 h2o.parseSetup <- function(data, pattern="", destination_frame = "", header = NA, sep = "", col.names = NULL, col.types = NULL,
-                           na.strings = NULL, parse_type = NULL, chunk_size = NULL, decrypt_tool = NULL) {
+                           na.strings = NULL, parse_type = NULL, chunk_size = NULL, decrypt_tool = NULL, skipped_columns=NULL) {
 
   # Allow single frame or list of frames; turn singleton into a list
   if( is.H2OFrame(data) ) data <- list(data)
@@ -140,6 +142,7 @@ h2o.parseSetup <- function(data, pattern="", destination_frame = "", header = NA
 
   # Prep srcs: must be of the form [src1,src2,src3,...]
   parseSetup.params$source_frames <- .collapse.char(sapply(data, function (d) attr(d, "id")))
+  parseSetup.params$skipped_columns <- paste0("[", paste (skipped_columns, collapse = ','), "]")
 
   # check the header
   if( is.na(header) && is.null(col.names) ) parseSetup.params$check_header <-  0
@@ -224,7 +227,8 @@ h2o.parseSetup <- function(data, pattern="", destination_frame = "", header = NA
         chunk_size         = parseSetup$chunk_size,
         delete_on_done     = TRUE,
         warnings           = parseSetup$warnings,
-        decrypt_tool       = parseSetup$decrypt_tool
+        decrypt_tool       = parseSetup$decrypt_tool,
+        skipped_columns    = parseSetup$skipped_columns
         )
 }
 

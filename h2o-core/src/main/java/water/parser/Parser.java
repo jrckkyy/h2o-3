@@ -66,10 +66,22 @@ public abstract class Parser extends Iced {
 
   protected static final long LARGEST_DIGIT_NUMBER = Long.MAX_VALUE/10;
   protected static boolean isEOL(byte c) { return (c == CHAR_LF) || (c == CHAR_CR); }
+  public boolean[] _keepColumns;
 
   protected final ParseSetup _setup;
   protected final Key<Job> _jobKey;
-  protected Parser( ParseSetup setup, Key<Job> jobKey ) { _setup = setup;  CHAR_SEPARATOR = setup._separator; _jobKey = jobKey;}
+  protected Parser( ParseSetup setup, Key<Job> jobKey ) {
+    _setup = setup;  CHAR_SEPARATOR = setup._separator; _jobKey = jobKey;
+    if (_setup!=null && _setup._number_columns > 0) {
+      _keepColumns = new boolean[_setup._number_columns];
+      for (int colIdx = 0; colIdx < _setup._number_columns; colIdx++)
+        _keepColumns[colIdx] = true;
+      if (_setup._skipped_columns!=null) {
+        for (int colIdx : _setup._skipped_columns)
+          _keepColumns[colIdx] = false;
+      }
+    }
+  }
   protected int fileHasHeader(byte[] bits, ParseSetup ps) { return ParseSetup.NO_HEADER; }
 
   // Parse this one Chunk (in parallel with other Chunks)
