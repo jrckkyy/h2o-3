@@ -167,8 +167,7 @@ public final class AutoBuffer {
 
     // Read IP & Port from the socket address. Also figure out H2ONode
     if (remoteAddress != null) {
-        throw new RuntimeException(remoteAddress.getPort() + " EEEE");
-      //_h2o = H2ONode.intern(remoteAddress.getAddress(), remoteAddress.getPort());
+      _h2o = H2ONode.intern(remoteAddress.getAddress(), remoteAddress.getPort());
     } else {
       // In case the communication originates from non-h2o node, we set _h2o node to null.
       // It is done for 2 reasons:
@@ -222,9 +221,7 @@ public final class AutoBuffer {
     _read = true;
     _firstPage = true;
     _chan = null;
-    int meta = getNodeUniqueMeta();
     int port = getSz(CTRL_BYTES + NODE_ID_BYTES + 2).getChar(CTRL_BYTES + NODE_ID_BYTES);
-    Log.info("PORT " + port + " unique meta " +meta + " aa  " + pack.getAddress().toString());
     _h2o = H2ONode.intern(pack.getAddress(), port);
     _persist = 0;               // No persistance
   }
