@@ -168,7 +168,6 @@ public abstract class SharedTreeMojoModel extends MojoModel {
                     case 1:  ab.skip(ab.get2());  break;
                     case 2:  ab.skip(ab.get3());  break;
                     case 3:  ab.skip(ab.get4());  break;
-                    case 16: ab.skip(nclasses < 256? 1 : 2);  break;  // Small leaf
                     case 48: ab.skip(4);  break;  // skip the prediction
                     default:
                         assert false : "illegal lmask value " + lmask + " in tree " + Arrays.toString(tree);
@@ -342,9 +341,6 @@ public abstract class SharedTreeMojoModel extends MojoModel {
                 case 3:
                     ab2.skip(ab2.get4());
                     break;
-                case 16:
-                    ab2.skip(nclasses < 256 ? 1 : 2);
-                    break;  // Small leaf
                 case 48:
                     ab2.skip(4);
                     break;  // skip the prediction
@@ -803,7 +799,6 @@ public abstract class SharedTreeMojoModel extends MojoModel {
           case 1:  ab.skip(ab.get2());  break;
           case 2:  ab.skip(ab.get3());  break;
           case 3:  ab.skip(ab.get4());  break;
-          case 16: ab.skip(nclasses < 256? 1 : 2);  break;  // Small leaf
           case 48: ab.skip(4);  break;  // skip the prediction
           default:
             assert false : "illegal lmask value " + lmask + " in tree " + Arrays.toString(tree);
@@ -878,7 +873,6 @@ public abstract class SharedTreeMojoModel extends MojoModel {
           case 1:  ab.skip(ab.get2());  break;
           case 2:  ab.skip(ab.get3());  break;
           case 3:  ab.skip(ab.get4());  break;
-          case 16: ab.skip(nclasses < 256? 1 : 2);  break;  // Small leaf
           case 48: ab.skip(4);  break;  // skip the prediction
           default:
             assert false : "illegal lmask value " + lmask + " in tree " + Arrays.toString(tree);
