@@ -80,7 +80,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
    * Note: this function is also used from the `hex.tree.CompressedTree` class in `h2o-algos` project.
    */
   @SuppressWarnings("ConstantConditions")  // Complains that the code is too complex. Well duh!
-    public static double scoreTree(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment, String[][] domains) {
+    public static double scoreTree(byte[] tree, double[] row, boolean computeLeafAssignment, String[][] domains) {
         ByteBufferWrapper ab = new ByteBufferWrapper(tree);
         GenmodelBitSet bs = null;
         long bitsRight = 0;
@@ -283,7 +283,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
     //------------------------------------------------------------------------------------------------------------------
 
     private static void computeTreeGraph(SharedTreeSubgraph sg, SharedTreeNode node, byte[] tree, ByteBufferWrapper ab, HashMap<Integer, AuxInfo> auxMap,
-                                         int nclasses, String names[], String[][] domains) {
+                                         String names[], String[][] domains) {
         int nodeType = ab.get1U();
         int colId = ab.get2();
         if (colId == 65535) {
@@ -360,7 +360,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
                 auxInfo.predR = leafValue;
             }
             else {
-                computeTreeGraph(sg, newNode, tree, ab2, auxMap, nclasses, names, domains);
+                computeTreeGraph(sg, newNode, tree, ab2, auxMap, names, domains);
             }
         }
 
@@ -383,7 +383,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
                 auxInfo.predL = leafValue;
             }
             else {
-                computeTreeGraph(sg, newNode, tree, ab2, auxMap, nclasses, names, domains);
+                computeTreeGraph(sg, newNode, tree, ab2, auxMap, names, domains);
             }
         }
         if (node.getNodeNumber() == 0) {
@@ -422,7 +422,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
                 String treeName = treeName(j, i, getDomainValues(getResponseIdx()));
                 SharedTreeSubgraph sg = g.makeSubgraph(treeName);
                 computeTreeGraph(sg, _compressed_trees[itree], _compressed_trees_aux[itree],
-                        _nclasses, getNames(), getDomainValues());
+                        getNames(), getDomainValues());
             }
 
             if (treeToPrint >= 0) {
@@ -434,21 +434,21 @@ public abstract class SharedTreeMojoModel extends MojoModel {
     }
 
     public static SharedTreeSubgraph computeTreeGraph(int treeNum, String treeName, byte[] tree, byte[] auxTreeInfo,
-                                                      int nclasses, String names[], String[][] domains) {
+                                                      String names[], String[][] domains) {
       SharedTreeSubgraph sg = new SharedTreeSubgraph(treeNum, treeName);
-      computeTreeGraph(sg, tree, auxTreeInfo, nclasses, names, domains);
+      computeTreeGraph(sg, tree, auxTreeInfo, names, domains);
       return sg;
     }
 
     private static void computeTreeGraph(SharedTreeSubgraph sg, byte[] tree, byte[] auxTreeInfo,
-                                         int nclasses, String names[], String[][] domains) {
+                                         String names[], String[][] domains) {
       SharedTreeNode node = sg.makeRootNode();
       node.setSquaredError(Float.NaN);
       node.setPredValue(Float.NaN);
       ByteBufferWrapper ab = new ByteBufferWrapper(tree);
       ByteBufferWrapper abAux = new ByteBufferWrapper(auxTreeInfo);
       HashMap<Integer, AuxInfo> auxMap = readAuxInfos(abAux);
-      computeTreeGraph(sg, node, tree, ab, auxMap, nclasses, names, domains);
+      computeTreeGraph(sg, node, tree, ab, auxMap, names, domains);
     }
 
     private static HashMap<Integer, AuxInfo> readAuxInfos(ByteBufferWrapper abAux) {
@@ -720,7 +720,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
       for (int j = 0; j < _ntree_groups; j++) {
         for (int i = 0; i < _ntrees_per_group; i++) {
           int itree = treeIndex(j, i);
-          double d = scoreTree(_compressed_trees[itree], row, _nclasses, true, _domains);
+          double d = scoreTree(_compressed_trees[itree], row, true, _domains);
           if (paths != null)
             paths[itree] = SharedTreeMojoModel.getDecisionPath(d);
           if (nodeIds != null) {
@@ -754,12 +754,11 @@ public abstract class SharedTreeMojoModel extends MojoModel {
    * SET IN STONE FOR MOJO VERSION "1.00" - DO NOT CHANGE
    * @param tree
    * @param row
-   * @param nclasses
    * @param computeLeafAssignment
    * @return
    */
   @SuppressWarnings("ConstantConditions")  // Complains that the code is too complex. Well duh!
-  public static double scoreTree0(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment) {
+  public static double scoreTree0(byte[] tree, double[] row, boolean computeLeafAssignment) {
     ByteBufferWrapper ab = new ByteBufferWrapper(tree);
     GenmodelBitSet bs = null;  // Lazily set on hitting first group test
     long bitsRight = 0;
@@ -827,12 +826,11 @@ public abstract class SharedTreeMojoModel extends MojoModel {
    * SET IN STONE FOR MOJO VERSION "1.10" - DO NOT CHANGE
    * @param tree
    * @param row
-   * @param nclasses
    * @param computeLeafAssignment
    * @return
    */
   @SuppressWarnings("ConstantConditions")  // Complains that the code is too complex. Well duh!
-  public static double scoreTree1(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment) {
+  public static double scoreTree1(byte[] tree, double[] row, boolean computeLeafAssignment) {
     ByteBufferWrapper ab = new ByteBufferWrapper(tree);
     GenmodelBitSet bs = null;
     long bitsRight = 0;

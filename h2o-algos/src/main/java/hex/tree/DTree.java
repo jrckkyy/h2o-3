@@ -27,7 +27,6 @@ import java.util.*;
 public class DTree extends Iced {
   final String[] _names; // Column names
   final int _ncols;      // Active training columns
-  final char _nclass;    // #classes, or 1 for regression trees
   final long _seed;      // RNG seed; drives sampling seeds if necessary
   private Node[] _ns;    // All the nodes in the tree.  Node 0 is the root.
   public int _len;       // Resizable array
@@ -50,7 +49,6 @@ public class DTree extends Iced {
     _names = fr.names();
     _ncols = ncols;
     _parms = parms;
-    _nclass=nclass;
     _ns = new Node[1];
     _mtrys = mtrys;
     _mtrys_per_tree = mtrys_per_tree;
@@ -751,7 +749,7 @@ public class DTree extends Iced {
       ab.put1(0).put2((char)65535); // Flag it special so the decompress doesn't look for top-level decision
     root().compress(ab, _abAux);      // Compress whole tree
     assert ab.position() == sz;
-    return new CompressedTree(ab.buf(),_nclass,_seed,tid,cls);
+    return new CompressedTree(ab.buf(), _seed,tid,cls);
   }
 
   static Split findBestSplitPoint(DHistogram hs, int col, double min_rows) {
