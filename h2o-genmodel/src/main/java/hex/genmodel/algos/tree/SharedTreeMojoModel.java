@@ -70,6 +70,34 @@ public abstract class SharedTreeMojoModel extends MojoModel {
       return _ntrees_per_group;
     }
 
+
+    /**
+     * @deprecated use {@link #scoreTree0(byte[], double[], boolean)} instead.
+     */
+    @Deprecated
+    public static double scoreTree0(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment) {
+      // note that nclasses is ignored (and in fact, always was)
+      return scoreTree0(tree, row, computeLeafAssignment);
+    }
+
+    /**
+     * @deprecated use {@link #scoreTree1(byte[], double[], boolean)} instead.
+     */
+    @Deprecated
+    public static double scoreTree1(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment) {
+      // note that nclasses is ignored (and in fact, always was)
+      return scoreTree1(tree, row, computeLeafAssignment);
+    }
+
+    /**
+     * @deprecated use {@link #scoreTree(byte[], double[], boolean, String[][])} instead.
+     */
+    @Deprecated
+    public static double scoreTree(byte[] tree, double[] row, int nclasses, boolean computeLeafAssignment, String[][] domains) {
+      // note that {@link nclasses} is ignored (and in fact, always was)
+      return scoreTree(tree, row, computeLeafAssignment, domains);
+    }
+
   /**
    * Highly efficient (critical path) tree scoring
    *
