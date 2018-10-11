@@ -133,27 +133,6 @@ public final class AutoBuffer {
     return new AutoBuffer(H2O.SELF, type._prior).putUdp(type).put2((char)H2O.H2O_PORT);
   }
 
-  static AutoBuffer createForWrite(H2ONode target, UDP.udp type, int task){
-    if (target == H2O.SELF) {
-      return createForMulticastWrite(type);
-    } else {
-      return new AutoBuffer(target, type._prior).putTask(type, task);
-    }
-
-  }
-
-  static AutoBuffer createForWrite(H2ONode target, UDP.udp type, int task, byte priority) {
-    if (target == H2O.SELF) {
-      return createForMulticastWrite(type);
-    } else {
-      return new AutoBuffer(target, priority).putTask(type, task);
-    }
-  }
-
-  static AutoBuffer reuseForUnicastWrite(AutoBuffer ab, UDP.udp type, int task) {
-    return ab.clearForWriting(type._prior).putTask(type, task);
-  }
-
   /** Incoming TCP request.  Make a read-mode AutoBuffer from the open Channel,
    *  figure the originating H2ONode from the first few bytes read.
    *
