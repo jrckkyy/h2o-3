@@ -45,7 +45,7 @@ public class DTree extends Iced {
     return Math.min(Math.max(1,(int)((double)_mtrys * Math.pow(_parms._col_sample_rate_change_per_level, _depth))),_ncols);
   }
 
-  public DTree(Frame fr, int ncols, char nclass, int mtrys, int mtrys_per_tree, long seed, SharedTreeModel.SharedTreeParameters parms) {
+  public DTree(Frame fr, int ncols, int mtrys, int mtrys_per_tree, long seed, SharedTreeModel.SharedTreeParameters parms) {
     _names = fr.names();
     _ncols = ncols;
     _parms = parms;
