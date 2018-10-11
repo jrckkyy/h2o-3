@@ -129,7 +129,7 @@ public final class AutoBuffer {
    * @param type type of the request
    * @return AutoBuffer
    */
-  public static AutoBuffer createForMulticastWrite(UDP.udp type){
+  static AutoBuffer createForMulticastWrite(UDP.udp type){
     return new AutoBuffer(H2O.SELF, type._prior).putUdp(type).put2((char)H2O.H2O_PORT);
   }
 

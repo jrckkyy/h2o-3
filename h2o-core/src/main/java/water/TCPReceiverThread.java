@@ -276,7 +276,10 @@ public class TCPReceiverThread extends Thread {
     // Snapshots are handled *IN THIS THREAD*, to prevent more UDP packets from
     // being handled during the dump.  Also works for packets from outside the
     // Cloud... because we use Timelines to diagnose Paxos failures.
-    int ctrl = ab._bb.get(0);//ab.getCtrl(); // at this time we know that the control byte has been read
+    int ctrl = ab.getCtrl();
+    // reset the position to the one before calling getCtrl as that method also changes the
+    // current position
+    ab.position(pos);
     System.out.println("POS" + ab.position());
     if( ctrl == UDP.udp.timeline.ordinal() ) {
       UDP.udp.timeline._udp.call(ab);
