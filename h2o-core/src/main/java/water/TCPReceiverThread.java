@@ -280,15 +280,16 @@ public class TCPReceiverThread extends Thread {
     // reset the position to the one before calling getCtrl as that method also changes the
     // current position
     ab.position(pos);
-    System.out.println("POS" + ab.position());
     if( ctrl == UDP.udp.timeline.ordinal() ) {
       UDP.udp.timeline._udp.call(ab);
       return;
     }
 
     // Suicide packet?  Short-n-sweet...
-    if( ctrl == UDP.udp.rebooted.ordinal())
+    if( ctrl == UDP.udp.rebooted.ordinal()) {
       UDPRebooted.checkForSuicide(ctrl, ab);
+      return; // no more work to do as we already handled the shutdown
+    }
 
     // Drop the packet.
     if( drop != 0 ) return;
@@ -334,9 +335,7 @@ public class TCPReceiverThread extends Thread {
     // through the deserialization call in RPC.remote_exec - and the deser'd
     // DTask gets tossed on a low priority queue to do "the real work".  Since
     // this is coming from a UDP packet the deser work is actually small.
-
-    // reset the position to the start of the real data
-    ab.position(pos);
+    
     H2O.submitTask(new FJPacket(ab,ctrl));
   }
 
