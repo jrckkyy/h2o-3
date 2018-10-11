@@ -33,8 +33,14 @@ public class UDPRebooted extends UDP {
       // When we discover that we run on a new version we can check if
       // the shutdown request comes from the node in the current cluster
       // otherwise we just ignore the request
-        AutoBuffer.createForWrite(target, udp.rebooted)
-              .put1(MAGIC_SAFE_CLUSTER_KILL_BYTE)
+
+      AutoBuffer ab;
+      if (target == H2O.SELF) {
+        ab = AutoBuffer.createForMulticastWrite(udp.rebooted);
+      } else {
+        ab = new AutoBuffer(target, udp.rebooted._prior).putUdp(udp.rebooted);
+      }
+      ab.put1(MAGIC_SAFE_CLUSTER_KILL_BYTE)
               .put1(ordinal())
               .putInt(H2O.SELF._heartbeat._cloud_name_hash)
               .close();
