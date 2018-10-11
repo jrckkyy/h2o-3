@@ -234,7 +234,10 @@ public class TimeLine extends UDP {
     return null;
   }
 
-  // Receive a remote timeline
+  // Receive a remote timeline. This method is called only from TCPReceiverThread
+  // and therefore we know that it always handles data from TCP(no multicast)
+  // this allows us to skip to the right location without the need to check for
+  // additional multicast headers
   static void tcp_call( final AutoBuffer ab ) {
     ab.position(1+2); //set the ab position after ctrl and nodeId bytes
     long[] snap = ab.getA8();
