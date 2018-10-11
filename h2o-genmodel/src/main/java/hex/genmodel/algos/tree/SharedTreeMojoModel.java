@@ -664,7 +664,7 @@ public abstract class SharedTreeMojoModel extends MojoModel {
             int itree = treeIndex(fromIndex, classIndex);
             for (int groupIndex = fromIndex; groupIndex < toIndex; groupIndex++) {
                 if (_compressed_trees[itree] != null) { // Skip all empty trees
-                  preds[k] += _scoreTree.scoreTree(_compressed_trees[itree], row, _nclasses, false, _domains);
+                  preds[k] += _scoreTree.scoreTree(_compressed_trees[itree], row, false, _domains);
                 }
                 itree++;
             }
