@@ -27,7 +27,7 @@ public abstract class SharedTreeMojoWriter<
   @Override
   protected void writeModelData() throws IOException {
     assert model._output._treeKeys.length == model._output._ntrees;
-    int nclasses = model._output.nclasses(); //????
+    int nclasses = model._output.nclasses();
     int ntreesPerClass = model.binomialOpt() && nclasses == 2 ? 1 : nclasses;
     writekv("n_trees", model._output._ntrees);
     writekv("n_trees_per_class", ntreesPerClass);
