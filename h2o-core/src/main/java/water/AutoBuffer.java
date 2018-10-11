@@ -1056,10 +1056,14 @@ public final class AutoBuffer {
     return (char)H2O.H2O_PORT;
   }
 
-  private AutoBuffer putTask(UDP.udp type, int tasknum) {
+  AutoBuffer putTask(UDP.udp type, int tasknum) {
+    return putUdp(type).put4(tasknum);
+  }
+
+  AutoBuffer putTask(int ctrl, int tasknum) {
     assert _bb.position() == 0;
     putSp(_bb.position()+1+2+4);
-    _bb.put((byte)type.ordinal()).putChar(calculateNodeUniqueMeta(H2O.SELF)).putInt(tasknum);
+    _bb.put((byte)ctrl).putChar(calculateNodeUniqueMeta(H2O.SELF)).putInt(tasknum);
     return this;
   }
 
