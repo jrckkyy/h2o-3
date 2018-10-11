@@ -217,7 +217,6 @@ public class RPC<V extends DTask> implements Future<V>, Delayed, ForkJoinPool.Ma
         // request).  Send a UDP reminder - but with the CLIENT_TCP_SEND flag
         // instead of the UDP send, and no DTask (since it previously went via
         // TCP, no need to resend it).
-
         AutoBuffer ab = new AutoBuffer(_target,_dt.priority()).putTask(UDP.udp.exec,_tasknum);
         ab.put1(CLIENT_TCP_SEND).close();
       }
@@ -574,7 +573,7 @@ public class RPC<V extends DTask> implements Future<V>, Delayed, ForkJoinPool.Ma
   // Install it as The Answer packet and wake up anybody waiting on an answer.
   // On all paths, send an ACKACK back
   static AutoBuffer ackack( AutoBuffer ab, int tnum ) {
-    return AutoBuffer.reuseForUnicastWrite(ab, udp.ackack, tnum);
+    return ab.clearForWriting(H2O.ACK_ACK_PRIORITY).putTask(UDP.udp.ackack.ordinal(),tnum);
   }
   protected AutoBuffer response( AutoBuffer ab ) {
 
