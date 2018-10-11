@@ -77,6 +77,9 @@ class MultiReceiverThread extends Thread {
       } catch( Exception e ) {
         Log.err("Exception on Multicast Interface, Group, Port - "+
           H2O.CLOUD_MULTICAST_IF+" "+H2O.CLOUD_MULTICAST_GROUP+":"+H2O.CLOUD_MULTICAST_PORT, e);
+        for(StackTraceElement el: e.getStackTrace()){
+          Log.err(el.toString());
+        }
         // On any error from anybody, close all sockets & re-open
         saw_error = true;
         errsock  = sock ;  sock  = null; // Signal error recovery on the next loop

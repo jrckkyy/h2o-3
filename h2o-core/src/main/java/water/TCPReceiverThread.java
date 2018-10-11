@@ -87,6 +87,7 @@ public class TCPReceiverThread extends Thread {
         bb.flip();
         int chanType = bb.get(); // 1 - small , 2 - big
         int nodeId = bb.getChar();
+        Log.info("HERE TCP RECEIVER THREAD" + nodeId);
         int sentinel = (0xFF) & bb.get();
         if(sentinel != 0xef) {
           if(H2O.SELF.getSecurityManager().securityEnabled) {
@@ -264,6 +265,7 @@ public class TCPReceiverThread extends Thread {
     // Randomly drop 1/10th of the packets, as-if broken network.  Dropped
     // packets are timeline recorded before dropping - and we still will
     // respond to timelines and suicide packets.
+    int pos = ab.position();
     int drop = H2O.ARGS.random_udp_drop &&
             RANDOM_UDP_DROP.nextInt(5) == 0 ? 2 : 0;
 
@@ -274,8 +276,8 @@ public class TCPReceiverThread extends Thread {
     // Snapshots are handled *IN THIS THREAD*, to prevent more UDP packets from
     // being handled during the dump.  Also works for packets from outside the
     // Cloud... because we use Timelines to diagnose Paxos failures.
-    int ctrl = ab.getCtrl();
-    ab.getNodeUniqueMeta(); // we don't need this information here, read to skip the 2 bytes
+    int ctrl = ab._bb.get(0);//ab.getCtrl(); // at this time we know that the control byte has been read
+    System.out.println("POS" + ab.position());
     if( ctrl == UDP.udp.timeline.ordinal() ) {
       UDP.udp.timeline._udp.call(ab);
       return;
@@ -330,7 +332,8 @@ public class TCPReceiverThread extends Thread {
     // DTask gets tossed on a low priority queue to do "the real work".  Since
     // this is coming from a UDP packet the deser work is actually small.
 
-
+    // reset the position to the start of the real data
+    ab.position(pos);
     H2O.submitTask(new FJPacket(ab,ctrl));
   }
 

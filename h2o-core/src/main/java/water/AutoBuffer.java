@@ -131,20 +131,33 @@ public final class AutoBuffer {
    * @param type type of the request
    * @return AutoBuffer
    */
-  static AutoBuffer createForMulticastWrite(UDP.udp type){
+  private static AutoBuffer createForMulticastWrite(UDP.udp type){
     return new AutoBuffer(H2O.SELF, type._prior).putUdp(type).put2((char)H2O.H2O_PORT);
   }
 
-  static AutoBuffer createForUnicastWrite(H2ONode target, UDP.udp type){
-    return new AutoBuffer(target, type._prior).putUdp(type);
+  static AutoBuffer createForWrite(H2ONode target, UDP.udp type){
+    if (target == H2O.SELF) {
+      return createForMulticastWrite(type);
+    } else {
+      return new AutoBuffer(target, type._prior).putUdp(type);
+    }
   }
 
-  static AutoBuffer createForUnicastWrite(H2ONode target, UDP.udp type, int task){
-    return new AutoBuffer(target, type._prior).putTask(type, task);
+  static AutoBuffer createForWrite(H2ONode target, UDP.udp type, int task){
+    if (target == H2O.SELF) {
+      return createForMulticastWrite(type);
+    } else {
+      return new AutoBuffer(target, type._prior).putTask(type, task);
+    }
+
   }
 
-  static AutoBuffer createForUnicastWrite(H2ONode target, UDP.udp type, int task, byte priority) {
-    return new AutoBuffer(target, priority).putTask(type, task);
+  static AutoBuffer createForWrite(H2ONode target, UDP.udp type, int task, byte priority) {
+    if (target == H2O.SELF) {
+      return createForMulticastWrite(type);
+    } else {
+      return new AutoBuffer(target, priority).putTask(type, task);
+    }
   }
 
   static AutoBuffer reuseForUnicastWrite(AutoBuffer ab, UDP.udp type, int task) {
@@ -167,6 +180,7 @@ public final class AutoBuffer {
 
     // Read IP & Port from the socket address. Also figure out H2ONode
     if (remoteAddress != null) {
+      Log.info("PORT TCP " + remoteAddress.getPort());
       _h2o = H2ONode.intern(remoteAddress.getAddress(), remoteAddress.getPort());
     } else {
       // In case the communication originates from non-h2o node, we set _h2o node to null.
@@ -1010,7 +1024,9 @@ public final class AutoBuffer {
   // -----------------------------------------------
   // Utility functions to handle common UDP packet tasks.
   // Get the 1st control byte
-  int  getCtrl( ) { return getSz(1).get(0)&0xFF; }
+  int  getCtrl( ) {
+      return getSz(1).get(0)&0xFF;
+  }
   // Get the node information in next 2 bytes
   int getNodeUniqueMeta( ) { return getSz(1+2).getChar(1); }
   // Get the task# in the next 4 bytes
