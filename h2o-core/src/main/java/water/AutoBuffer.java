@@ -160,7 +160,7 @@ public final class AutoBuffer {
    *  remoteAddress set to null means that the communication is originating from non-h2o node, non-null value
    *  represents the case where the communication is coming from h2o node.
    *  */
-  public AutoBuffer(ByteChannel sock, InetSocketAddress remoteAddress) {
+  public AutoBuffer(ByteChannel sock, InetSocketAddress remoteAddress) throws IOException {
     _chan = sock;
     raisePriority();            // Make TCP priority high
     _bb = BBP_BIG.make();       // Get a big / TPC-sized ByteBuffer
@@ -218,7 +218,7 @@ public final class AutoBuffer {
   }
 
   /** Read from UDP multicast.  Same as the byte[]-read variant, except there is an H2O. */
-  private AutoBuffer( DatagramPacket pack ) {
+  AutoBuffer( DatagramPacket pack ) {
     _size = pack.getLength();
     _bb = ByteBuffer.wrap(pack.getData(), 0, pack.getLength()).order(ByteOrder.nativeOrder());
     _bb.position(0);
@@ -1014,9 +1014,7 @@ public final class AutoBuffer {
   // -----------------------------------------------
   // Utility functions to handle common UDP packet tasks.
   // Get the 1st control byte
-  int  getCtrl( ) {
-      return getSz(1).get(0)&0xFF;
-  }
+  int  getCtrl( ) { return getSz(1).get(0)&0xFF; }
   // Get the node information in next 2 bytes
   int getNodeUniqueMeta( ) { return getSz(1+2).getChar(1); }
   // Get the task# in the next 4 bytes
