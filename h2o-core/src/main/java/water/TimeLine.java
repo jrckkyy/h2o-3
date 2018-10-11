@@ -236,7 +236,7 @@ public class TimeLine extends UDP {
 
   // Receive a remote timeline
   static void tcp_call( final AutoBuffer ab ) {
-    ab.getNodeUniqueMeta(); // we don't need this information here, read to skip the 2 bytes
+    ab.position(1+2); //set the ab position after ctrl and nodeId bytes
     long[] snap = ab.getA8();
     int idx = CLOUD.nidx(ab._h2o);
     if (idx >= 0 && idx < SNAPSHOT.length)

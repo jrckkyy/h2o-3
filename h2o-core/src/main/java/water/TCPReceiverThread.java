@@ -86,8 +86,7 @@ public class TCPReceiverThread extends Thread {
         }
         bb.flip();
         int chanType = bb.get(); // 1 - small , 2 - big
-        int nodeId = bb.getChar();
-        Log.info("HERE TCP RECEIVER THREAD" + nodeId);
+        bb.getChar(); // read note id
         int sentinel = (0xFF) & bb.get();
         if(sentinel != 0xef) {
           if(H2O.SELF.getSecurityManager().securityEnabled) {
@@ -335,7 +334,6 @@ public class TCPReceiverThread extends Thread {
     // through the deserialization call in RPC.remote_exec - and the deser'd
     // DTask gets tossed on a low priority queue to do "the real work".  Since
     // this is coming from a UDP packet the deser work is actually small.
-    
     H2O.submitTask(new FJPacket(ab,ctrl));
   }
 
