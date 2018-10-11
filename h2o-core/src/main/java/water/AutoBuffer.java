@@ -41,8 +41,6 @@ import static water.H2O.OptArgs.SYSTEM_PROP_PREFIX;
  */
 public final class AutoBuffer {
 
-  private static byte CTRL_BYTES = 1;
-  private static byte NODE_ID_BYTES = 2;
   // Maximum size of an array we allow to allocate (the value is designed
   // to mimic the behavior of OpenJDK libraries)
   private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
@@ -227,7 +225,7 @@ public final class AutoBuffer {
     _read = true;
     _firstPage = true;
     _chan = null;
-    int port = getSz(CTRL_BYTES + NODE_ID_BYTES + 2).getChar(CTRL_BYTES + NODE_ID_BYTES);
+    int port = getSz(1+2+2).getChar(1+2);
     _h2o = H2ONode.intern(pack.getAddress(), port);
     _persist = 0;               // No persistance
   }
