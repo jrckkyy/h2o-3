@@ -11,6 +11,23 @@ PUBDEV-5777: set H2O XGBoost default to be the same as native XGBoost.
 1. We will change the XGBoost parameter to be the same as native XGBoost.
 2. We will add new python API into h2o wheel to make functions that will adapted H2O frames to panda frames used
 by native XGBoost.  Users will need to call this function before calling native XGBoost.
+
+booster default to gbtree
+silent default to 0
+nthread default to maximum number of threads available
+disable_default_eval_metric default to 0
+num_pbuffer set by XGBoost
+num_feature set by XGBoost
+eta/learning_rate default to 0.3
+gamma/min_split_loss default to 0
+max_depth default to 6
+min_child_weight default to 1
+max_delta_step default to 0
+subsample default to 1
+colsample_bytree default to 1
+colsample_bylevel default to 1
+lambda/reg_lambda default to 1
+alpha/reg_alpha default to 0
 '''
 def comparison_test_dense():
     assert H2OXGBoostEstimator.available() is True
