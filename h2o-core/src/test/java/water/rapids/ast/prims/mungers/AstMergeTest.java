@@ -46,7 +46,7 @@ public class AstMergeTest extends TestUtil {
 
     assertEquals(2, res.numRows());
 
-    printOutFrameAsTable(res, true, false, res.numRows());
+    printOutFrameAsTable(res, false, res.numRows());
 
     Vec expected = vec(1, 2);
     assertVecEquals(expected, res.vec(0), 1e-6);

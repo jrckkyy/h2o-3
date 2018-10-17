@@ -1256,22 +1256,6 @@ public class Frame extends Lockable<Frame> {
     return filtered;
   }
 
-  /**
-   *
-   * @param columnIndex
-   * @return frame with specified column encoded into binary enumeration column
-   */
-  public Frame vectorAsQuasiBinomial(int columnIndex) {
-
-    Vec columnToEncode = vec(columnIndex);
-    String[] domains = columnToEncode.domain().clone();
-    Frame encodedFrame = new AsQuasiBinomialTask(domains).doAll( Vec.T_NUM, columnToEncode).outputFrame(); // TODO how to avoid creation of Frame when doing MRT?
-    replace(columnIndex, encodedFrame.vec(0));
-    DKV.put(this);
-    columnToEncode.remove();
-    return this;
-  }
-
   /** return a frame with unique values from the specified column */
   public Frame uniqueValuesBy(int columnIndex) {
     Vec vec0 = vec(columnIndex);
